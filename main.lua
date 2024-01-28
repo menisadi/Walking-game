@@ -28,6 +28,12 @@ local dialogue = {
 
 function love.load()
     resetFriendPosition()
+    -- Initialize dialogue variables
+    dialogue.text = ""
+    dialogue.displayedText = ""
+    dialogue.currentIndex = 0
+    dialogue.timer = 0
+    dialogue.duration = 0.05
 end
 
 function resetFriendPosition()
@@ -57,6 +63,13 @@ local function lerp(a, b, t)
     return a * (1 - t) + b * t
 end
 
+function displayFriendDialogue(text)
+    dialogue.text = text
+    dialogue.displayedText = ""
+    dialogue.currentIndex = 0
+    dialogue.timer = dialogue.duration
+end
+
 function love.update(dt)
     player.x = lerp(player.x, player.destX, dt * 3)
     player.y = lerp(player.y, player.destY, dt * 3)
@@ -83,12 +96,26 @@ function love.update(dt)
     -- Check player-friend proximity
     local distance = math.sqrt((player.x - friend.x)^2 + (player.y - friend.y)^2)
     if distance < 50 then
-        dialogue.text = "Hello again. Did you know that the time is: " .. os.date("%H:%M:%S")
-        dialogue.timer = dialogue.duration        
+        if dialogue.timer <= 0 then
+            displayFriendDialogue("Hello again. Did you know that the time is: " .. os.date("%H:%M:%S"))
+            dialogue.text = "Hello again. Did you know that the time is: " .. os.date("%H:%M:%S")
+        end
+        dialogue.timer = dialogue.duration
+    else
+        dialogue.timer = 0
     end
-    if dialogue.timer > 0 then
-        dialogue.timer = dialogue.timer - dt
-    end
+
+    -- Update dialogue text display
+    -- if dialogue.timer > 0 then
+    --     dialogue.timer = dialogue.timer - dt
+    --     if dialogue.timer <= 0 then
+    --         dialogue.currentIndex = dialogue.currentIndex + 1
+    --         dialogue.displayedText = dialogue.text:sub(1, dialogue.currentIndex)
+    --         if dialogue.currentIndex < #dialogue.text then
+    --             dialogue.timer = dialogue.duration
+    --         end
+    --     end
+    -- end    
 end
 
 function love.draw()
@@ -121,5 +148,6 @@ function love.draw()
         love.graphics.rectangle("fill", 0, love.graphics.getHeight() - 50, love.graphics.getWidth(), 50)
         love.graphics.setColor(1, 1, 1) -- White text
         love.graphics.printf(dialogue.text, 0, love.graphics.getHeight() - 40, love.graphics.getWidth(), "center")
+        -- love.graphics.printf(dialogue.displayedText, 30, love.graphics.getHeight() - 40, love.graphics.getWidth() - 60, "left")
     end
 end
