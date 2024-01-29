@@ -1,4 +1,5 @@
 local math = require("math")
+local random_bible = require("bible_generator")
 
 local player = {}
 player.x = 150
@@ -11,8 +12,8 @@ player.destX = player.x
 player.destY = player.y
 
 local friend = {}
-friend.x = 100
-friend.y = 100
+friend.x = 130
+friend.y = 130
 friend.width = 32
 friend.height = 32
 
@@ -97,8 +98,9 @@ function love.update(dt)
     local distance = math.sqrt((player.x - friend.x)^2 + (player.y - friend.y)^2)
     if distance < 50 then
         if dialogue.timer <= 0 then
-            displayFriendDialogue("Hello again. Did you know that the time is: " .. os.date("%H:%M:%S"))
-            dialogue.text = "Hello again. Did you know that the time is: " .. os.date("%H:%M:%S")
+            -- displayFriendDialogue("Hello again. Did you know that the time is: " .. os.date("%H:%M:%S"))
+            -- dialogue.text = "Hello again. Did you know that the time is: " .. os.date("%H:%M:%S")
+            dialogue.text = random_bible.random_bible_phrase()
         end
         dialogue.timer = dialogue.duration
     else
@@ -147,7 +149,7 @@ function love.draw()
         love.graphics.setColor(0, 0, 0, 0.7) -- Black with 70% opacity
         love.graphics.rectangle("fill", 0, love.graphics.getHeight() - 50, love.graphics.getWidth(), 50)
         love.graphics.setColor(1, 1, 1) -- White text
-        love.graphics.printf(dialogue.text, 0, love.graphics.getHeight() - 40, love.graphics.getWidth(), "center")
+        love.graphics.printf(dialogue.text, 0, love.graphics.getHeight() - 40, love.graphics.getWidth(), "left")
         -- love.graphics.printf(dialogue.displayedText, 30, love.graphics.getHeight() - 40, love.graphics.getWidth() - 60, "left")
     end
 end
